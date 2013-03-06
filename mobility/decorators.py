@@ -1,7 +1,7 @@
 import functools
 
 
-def mobile_template(template):
+def mobile_template(template, template_argument_name='template'):
     """
     Mark a function as mobile-ready and pass a mobile template if MOBILE.
 
@@ -14,12 +14,15 @@ def mobile_template(template):
 
     This function is useful if the mobile view uses the same context but a
     different template.
+
+    You can optionally pass template_argument_name to work with views that use
+    template arguments named something other than template
     """
     def decorator(f):
         @functools.wraps(f)
         def wrapper(request, *args, **kw):
             fmt = {'mobile/': 'mobile/' if request.MOBILE else ''}
-            kw['template'] = template.format(**fmt)
+            kw[template_argument_name] = template.format(**fmt)
             return f(request, *args, **kw)
         return wrapper
     return decorator
